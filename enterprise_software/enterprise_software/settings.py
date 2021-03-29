@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'invoice_template.apps.InvoiceTemplateConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

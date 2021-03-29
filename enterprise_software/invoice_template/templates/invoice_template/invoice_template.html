@@ -1,0 +1,114 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice preview</title>
+    <style>
+		@page { size: {{config.page_width}}; margin: {{config.page_margins}};}
+		@media print { body { width: {{config.page_width}} } } /* this line is needed for fixing Chrome's bug */
+	</style>
+	<style type="text/css">
+		table,body { font-size:9px; }
+		p {margin:0;}
+	</style>
+</head>
+<body>
+    <div style="width:{{config.page_width}}">
+        <center>
+            <img src="{% static 'invoice_template/invoice_title.png' %}" alt="Logo" width=95%>
+            <p> Address: {{config.shop_address}} </p>
+            <p> Contact: {{config.shop_contact}} </p>
+            <p> {{config.separation_line}} </p>
+
+            <table width=90% cellspacing=2px>
+                {% for item_row in config.available_items %}
+                    <tr align="center">
+                    {% for item in item_row %}
+                        <td>{{item}}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+		    </table>
+            <p> {{config.separation_line}} </p>
+
+            <table width=90%>
+                <tr>
+                    <td style="text-align:left">Customer Name: {{bill_info.customer_name}}</td>
+                    <td style="text-align:right">Invoice No: {{bill_info.invoice_id}}</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left">Phone no: {{bill_info.customer_phone}}</td>
+                    <td style="text-align:right">Date: {{bill_info.invoice_date}}</td>
+                </tr>
+		    </table>
+
+            <br>
+
+            <table width=90% cellpadding=0>
+                <tr>
+                    <th style="text-align:left" width=35%>Item</th>
+                    <th>Unit Price</th>
+                    <th>Qty</th>
+                    <th style="text-align:right">Amount</th>
+                </tr>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+
+                {% for brought_item in bill_info.item_details %}
+                    <tr>
+                        <td style="text-align:left;">{{brought_item.item_name}}</td>
+                        <td style="text-align:center">{{brought_item.unit_price}}</td>
+                        <td style="text-align:center">{{brought_item.qty}}</td>
+                        <td style="text-align:right">{{brought_item.amount}}</td>
+			        </tr>
+                {% endfor %}
+
+                <tr>
+                    <th>&nbsp;</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+			    </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align:left"> Sub Total :</td>
+                    <td style="text-align:center"> {{bill_info.sub_total.qty}}</td>
+                    <td style="text-align:right"> {{bill_info.sub_total.amount}}</td>
+                </tr>
+                {% if bill_info.discount.display %}
+                <tr>
+                    <td></td>
+                    <td style="text-align:left">Discount :</td>
+                    <td> ({{bill_info.discount.percentage}}) </td>
+                    <td style="text-align:right"> {{bill_info.discount.amount}} </td>
+                </tr>
+                {% endif %}
+
+                {% if bill_info.tax.display %}
+                <tr>
+                    <td></td>
+                    <td style="text-align:left">Tax :</td>
+                    <td> ({{bill_info.tax.percentage}})</td>
+                    <td style="text-align:right"> {{bill_info.tax.amount}} </td>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <td></td>
+                    <td style="text-align:left"> <b>Grand Total :</b></td>
+                    <td></td>
+                    <td style="text-align:right"><b> &#8377; {{bill_info.grand_total}}</b></td>
+                </tr>
+            </table>
+
+            <p> {{config.separation_line}} </p>
+            <p> {{config.end_msg}} </p>
+            <p> {{config.separation_line}} </p>
+        </center>
+    </div>
+</body>
+</html>
