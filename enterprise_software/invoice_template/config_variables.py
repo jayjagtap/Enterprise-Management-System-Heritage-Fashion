@@ -15,5 +15,5 @@ invoice_template_config = {
     "page_width": "80mm",
     "page_margins": "5mm 2mm 5mm 2mm",
     "font_size": "9px",
-    "separation_line": generate_spe_line(97, "-")
+    "separation_line": generate_spe_line(93, "-")
 }

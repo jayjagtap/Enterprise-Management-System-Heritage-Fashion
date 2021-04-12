@@ -1,5 +1,10 @@
 from .config_variables import invoice_template_config
-from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+
 
 # Simulating input that will be generated from billing page form
 bill_info = {"customer_name" : "ABC XYZ",
@@ -21,3 +26,31 @@ bill_info = {"customer_name" : "ABC XYZ",
 def populate_invoice_template(request):
     context = {"config" : invoice_template_config, "bill_info": bill_info}
     return render(request, "invoice_template/invoice_template.html", context)
+
+
+def print_invoice(request):
+    if request.method == 'POST':
+        request_data = request.POST
+        # print(request_data)
+
+        context = {"config": invoice_template_config, "bill_info": bill_info}
+
+        current_site = get_current_site(request).domain
+        scheme = request.is_secure() and "https" or "http"
+        site = '{scheme}://{host}'.format(scheme=scheme, host=current_site)
+
+        invoice = render_to_string("invoice_template/invoice_template.html", context)
+        html_invoice = HTML(string=invoice, base_url=site)
+        pdf_invoice = html_invoice.write_pdf()
+
+        response = HttpResponse(pdf_invoice, content_type='application/pdf')
+        response['Content-Disposition'] = ('inline; filename=' + "invoice.pdf")
+        return response
+
+    else:
+        return redirect("home_page")
+
+
+def home_page(request):
+    return render(request, "invoice_template/home_page.html")
+

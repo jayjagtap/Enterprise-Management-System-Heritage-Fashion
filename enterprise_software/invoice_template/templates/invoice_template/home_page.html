@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+ <form action={% url 'print_invoice' %} method="POST">
+ {% csrf_token %}
+      <input type="text" name="dummy">
+      <input type="submit" value="Print">
+ </form>
+</body>
+</html>
